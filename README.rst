@@ -23,13 +23,8 @@ Configure your Difio user ID
 
     af env-add <appname> DIFIO_USER_ID=YourUserID
 
-Because AppFog doesn't support post deploy hooks you have to enable the
-registration script in wsgi.py. Near the top add this:
-
-::
-
-    import os
-    os.system("%s/%s" % (os.environ['VIRTUAL_ENV'], 'bin/difio-appfog-python'))
+Because AppFog doesn't support post deploy hooks you have NO WAY to enable the
+registration script. :(
 
 Then push your application to AppFog
 
