@@ -24,19 +24,21 @@
 #
 #####################################################################################
 
+import sys
+import json
 from difio_appfog import version
 from common_difio import difio_register
 
+application = json.loads(os.environ['VCAP_APPLICATION'])
+
 data = {
     'user_id'    : int(os.environ['DIFIO_USER_ID']),
-    'app_name'   : os.environ['VCAP_APP_NAME'],
-    'app_uuid'   : os.environ['DIFIO_UUID'],
-    'app_type'   : os.environ['OPENSHIFT_GEAR_TYPE'],
-    'app_url'    : 'http://%s' % os.environ['OPENSHIFT_GEAR_DNS'],
-    'app_vendor' : 0, # Red Hat OpenShift
-    'pkg_type'   : 0, # Python PyPI
+    'app_name'   : application['name'],
+    'app_uuid'   : application['instance_id'],
+    'app_type'   : 'python-%d.%d.%d' % (sys.version_info[0], sys.version_info[1], sys.version_info[2]),
+    'app_url'    : 'http://%s' % application['uris'][0],
+    'app_vendor' : 0, # AppFog
     'installed'  : [],
 }
 
 difio_register(data, "%s/%s" % (version.name, version.version))
-
