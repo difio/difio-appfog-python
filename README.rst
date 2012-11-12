@@ -1,69 +1,41 @@
-Difio registration agent for OpenShift / Python applications.
+Difio registration agent for AppFog / Python applications.
 
 It compiles a list of locally installed Python packages and sends it to
 <http://www.dif.io>.
 
 
-Installing on your OpenShift application
+Installing on your AppFog application
 ----------------------------------------
 
 Create an account at <http://www.dif.io>
 
-Create a Python application on OpenShift
+Create a Python application on AppFog
+
+Add a dependency in your requirements.txt file
 
 ::
 
-    rhc-create-app -a myapp -t python-2.6
+    echo "difio-appfog-python" >> requirements.txt
 
-Add a dependency in your setup.py file
-
-::
-
-    from setuptools import setup
-
-    setup(
-        name='MyApplication',
-        version='1.0',
-        install_requires=['difio-openshift-python'],
-     )
-
-Set your userID in the ./data/DIFIO_SETTINGS file
+Configure your Difio user ID
 
 ::
 
-    cd ./myapp/
-    echo "export DIFIO_USER_ID=YourUserID" > ./data/DIFIO_SETTINGS
+    af env-add <appname> DIFIO_USER_ID=YourUserID
 
-OpenShift by default will treat your application as a package. If the name given in
-setup.py is different from the name passed to rhc-create-app command then
-set the application name in the ./data/DIFIO_SETTINGS file
+Because AppFog doesn't support post deploy hooks you have to enable the
+registration script in wsgi.py. Near the top add this:
 
 ::
 
-    echo "export DIFIO_APP_NAME='MyApplication'" >> ./data/DIFIO_SETTINGS
+    import os
+    os.system("%s/%s" % (os.environ['VIRTUAL_ENV'], 'bin/difio-appfog-python'))
 
-This registration script will ignore package names that match the value of 
-OPENSHIFT_GEAR_NAME and DIFIO_APP_NAME environment variables.
-
-
-Enable the registration script in .openshift/action_hooks/post_deploy
+Then push your application to AppFog
 
 ::
 
-    # Activate VirtualEnv in order to use the correct libraries
-    source $OPENSHIFT_GEAR_DIR/virtenv/bin/activate
-
-    # Set user defined settings
-    source $OPENSHIFT_REPO_DIR/data/DIFIO_SETTINGS
-
-    # Register/update the application
-    python $OPENSHIFT_GEAR_DIR/virtenv/bin/difio-openshift-python
-
-Then push your application to OpenShift
-
-::
-
-    git push
+    af update <appname>
 
 That's it, you can now check your application statistics at
 <http://www.dif.io>
