@@ -2,7 +2,7 @@
 
 #####################################################################################
 #
-# Copyright (c) 2012, Alexander Todorov <atodorov()dif.io>
+# Copyright (c) 2012-2013, Alexander Todorov <atodorov@nospam.dif.io>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
 #
 #####################################################################################
 
-import sys
+import os
 import json
 from difio_appfog import version
 from common_difio import difio_register
@@ -35,7 +35,6 @@ data = {
     'user_id'    : int(os.environ['DIFIO_USER_ID']),
     'app_name'   : application['name'],
     'app_uuid'   : application['instance_id'],
-    'app_type'   : 'python-%d.%d.%d' % (sys.version_info[0], sys.version_info[1], sys.version_info[2]),
     'app_url'    : 'http://%s' % application['uris'][0],
     'app_vendor' : 4, # AppFog
     'installed'  : [],
